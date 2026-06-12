@@ -1,0 +1,23 @@
+{
+  "version": "v2",
+  "notes": "Template only. Do not compute with unverified equations.",
+  "equations": [
+    {
+      "equation_id": "example_mammalia_do_not_use_unverified",
+      "clade": "Mammalia",
+      "equation_type": "PGLS | OLS | species_specific | clade_specific | other",
+      "a": null,
+      "b": null,
+      "formula_text": "metabolic_rate = a * mass ** b",
+      "mass_units": "g | kg",
+      "metabolic_rate_units": "ml_O2_h | ml_O2_min | W | mg_O2_h | other",
+      "log_space": false,
+      "temperature_reference_c": null,
+      "physiological_state": "BMR | SMR | RMR",
+      "allowed_taxa": [],
+      "citation": "",
+      "verified": false,
+      "notes": "Fill from primary literature or verified database documentation before use."
+    }
+  ]
+}
