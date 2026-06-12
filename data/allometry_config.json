@@ -1,0 +1,105 @@
+{
+  "version": "v2",
+  "notes": "All equations must be verified before computation. verified=true indicates equation sourced from peer-reviewed primary literature with documented mass units, rate units, and applicable taxa. Do not compute residuals using equations with verified=false or null a/b values. Temperature reference is the measurement temperature at which the equation was calibrated; ectotherm equations are only valid at their reference temperature unless a separate verified Q10 correction equation is added.",
+  "equations": [
+    {
+      "equation_id": "REP_BD76",
+      "clade": "Reptilia",
+      "equation_type": "OLS",
+      "a": 0.188,
+      "b": 0.80,
+      "formula_text": "SMR_ml_O2_h = 0.188 * M_g ^ 0.80",
+      "mass_units": "g",
+      "metabolic_rate_units": "ml_O2_h",
+      "log_space": false,
+      "temperature_reference_c": 30.0,
+      "physiological_state": "SMR",
+      "allowed_taxa": [
+        "Reptilia",
+        "Squamata",
+        "Crocodilia",
+        "Testudines"
+      ],
+      "citation": "Bennett AF & Dawson WR (1976) Metabolism. In: Gans C & Dawson WR (eds) Biology of the Reptilia vol 5, Academic Press, New York, pp 127-223.",
+      "verified": true,
+      "notes": "Clade-level reptile SMR regression at 30°C. M in grams, SMR in ml O2/h. Valid at 30°C only; no Q10 correction is authorized in this config. Used as the phylogenetic baseline for Crocodylus porosus and Alligator mississippiensis delta_E computation. Do not apply to ectotherm measurements taken at temperatures other than 30°C without a separate verified Q10 equation."
+    },
+    {
+      "equation_id": "CP_SEY13",
+      "clade": "Crocodylus",
+      "equation_type": "OLS",
+      "a": 1.01,
+      "b": 0.829,
+      "formula_text": "SMR_ml_O2_min = 1.01 * M_kg ^ 0.829",
+      "mass_units": "kg",
+      "metabolic_rate_units": "ml_O2_min",
+      "log_space": false,
+      "temperature_reference_c": 30.0,
+      "physiological_state": "SMR",
+      "allowed_taxa": [
+        "Crocodylus porosus"
+      ],
+      "citation": "Seymour RS, Gienger CM, Brien ML, Tracy CR, Manolis SC, Webb GJ & Christian KA (2013) Relationship between body size and standard metabolic rate in estuarine crocodiles Crocodylus porosus. J Exp Biol 216:3940-3948. PMID 23233168.",
+      "verified": true,
+      "notes": "Species-specific allometric SMR equation for Crocodylus porosus measured at 30°C. Mass range studied: 0.19-389 kg. M in kg, SMR in ml O2/min. USAGE NOTE: This equation is used as the MEASURED value for C. porosus at a representative mass (100 kg), not as the phylogenetic baseline. The baseline for computing signed_log_residual is REP_BD76 (clade-level reptile equation). Using this equation as both measured and baseline would be circular."
+    },
+    {
+      "equation_id": "MAM_KLB47",
+      "clade": "Mammalia",
+      "equation_type": "OLS",
+      "a": 607.2,
+      "b": 0.75,
+      "formula_text": "BMR_ml_O2_h = 607.2 * M_kg ^ 0.75",
+      "mass_units": "kg",
+      "metabolic_rate_units": "ml_O2_h",
+      "log_space": false,
+      "temperature_reference_c": null,
+      "physiological_state": "BMR",
+      "allowed_taxa": [
+        "Mammalia",
+        "Placentalia"
+      ],
+      "citation": "Kleiber M (1947) Body size and metabolic rate. Physiol Rev 27:511-541. Coefficient in ml O2/h derived from: BMR(W) = 3.39 * M_kg^0.75 (where 70 kcal/day * 4184 J/kcal / 86400 s = 3.390 W at M=1 kg), converted at 1 W = 179.1 ml O2/h (20.1 kJ per L O2 at STP).",
+      "verified": true,
+      "notes": "Kleiber (1947) allometric equation for mammalian BMR. Exponent b=0.75 is the canonical value; empirical estimates range 0.67-0.75 depending on dataset and method. M in kg, BMR in ml O2/h. temperature_reference_c is null because this is an endotherm equation; measurements should be taken at thermoneutral zone (TNZ). FLAG_TNZ_UNCLEAR must be applied to any species where thermoneutral conditions cannot be confirmed (e.g., thermoconformers, hibernators, lab strains at non-TNZ room temperature). Unit derivation: 1 W = 3600 J/h; 1 L O2 ~ 20.1 kJ (RQ~0.8); therefore 1 W = 3600/20100 * 1000 ml O2/h = 179.1 ml O2/h."
+    },
+    {
+      "equation_id": "AVE_MW04",
+      "clade": "Aves",
+      "equation_type": "OLS",
+      "a": 0.8073,
+      "b": 0.669,
+      "formula_text": "BMR_ml_O2_h = 0.8073 * M_g ^ 0.669",
+      "mass_units": "g",
+      "metabolic_rate_units": "ml_O2_h",
+      "log_space": false,
+      "temperature_reference_c": null,
+      "physiological_state": "BMR",
+      "allowed_taxa": [
+        "Aves"
+      ],
+      "citation": "McKechnie AE & Wolf BO (2004) The allometry of avian basal metabolic rate: good predictions need good data. Physiol Biochem Zool 77:502-521. Original equation: log10(BMR_mW) = 0.669 * log10(M_g) + 0.654 (all birds combined). Converted to ml O2/h: a_mW = 10^0.654 = 4.508 mW/g^0.669; 1 mW = 0.001 W; 1 W = 179.1 ml O2/h; therefore a_ml_O2_h = 4.508 * 0.001 * 179.1 = 0.8073.",
+      "verified": true,
+      "notes": "All-bird combined BMR allometry from McKechnie & Wolf (2004). M in grams, BMR in ml O2/h (converted from original mW units). temperature_reference_c is null (endotherm). Calibrated on wild birds; domestic strains (e.g., Gallus gallus domesticus, selected for growth/production) will deviate significantly and require FLAG_ARTIFICIAL_SELECTION_RISK. Non-passerine equation (Table 1 in McKechnie & Wolf 2004) has slightly different coefficients (b=0.675, log10a=0.608) but all-bird combined equation used here for maximum sample size and robustness."
+    },
+    {
+      "equation_id": "TUNN_CLK08_PROXY",
+      "clade": "Thunnini",
+      "equation_type": "species_specific",
+      "a": 0.322,
+      "b": 1.0,
+      "formula_text": "RMR_ml_O2_h = 0.322 * M_g ^ 1.0 (derived from mass-specific rate 460 mg_O2/kg/h at 19C)",
+      "mass_units": "g",
+      "metabolic_rate_units": "ml_O2_h",
+      "log_space": false,
+      "temperature_reference_c": 19.0,
+      "physiological_state": "RMR",
+      "allowed_taxa": [
+        "Thunnus maccoyii"
+      ],
+      "citation": "Clark TD et al. (2008) Thermal effects on the metabolic rate and swimming performance of the southern bluefin tuna Thunnus maccoyii. J Fish Biol 72:1289-1298. PMID 17081787. Rate 460 mg O2/kg/h; unit conversion: 460 mg O2/kg/h / 1.429 mg/ml / 1000 g/kg = 0.322 ml O2/g/h.",
+      "verified": false,
+      "notes": "NOT SUITABLE AS BASELINE FOR DELTA_E COMPUTATION. verified=false. This entry records a single mass-specific RMR point for Thunnus maccoyii (sister species of T. thynnus) at 19°C. b=1.0 is assumed (isometric scaling) not empirically validated. Included for documentation of the proxy data source only. Problems: (1) proxy species — T. maccoyii not T. thynnus; (2) temperature 19°C not a standard reference; (3) RMR measured in tunnel respirometer at minimum sustained swimming speed — tuna cannot stop swimming (obligate ram ventilators) so true post-absorptive rest is infeasible; (4) no validated clade-level allometric equation for Thunnini exists in this config. Do not use for computing signed_log_residual or delta_E_magnitude."
+    }
+  ]
+}
