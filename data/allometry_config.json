@@ -83,6 +83,25 @@
       "notes": "All-bird combined BMR allometry from McKechnie & Wolf (2004). M in grams, BMR in ml O2/h (converted from original mW units). temperature_reference_c is null (endotherm). Calibrated on wild birds; domestic strains (e.g., Gallus gallus domesticus, selected for growth/production) will deviate significantly and require FLAG_ARTIFICIAL_SELECTION_RISK. Non-passerine equation (Table 1 in McKechnie & Wolf 2004) has slightly different coefficients (b=0.675, log10a=0.608) but all-bird combined equation used here for maximum sample size and robustness."
     },
     {
+      "equation_id": "AM_GBT17",
+      "clade": "Alligator",
+      "equation_type": "OLS",
+      "a": 0.491,
+      "b": 0.965,
+      "formula_text": "SMR_ml_O2_min = 0.491 * M_kg ^ 0.965",
+      "mass_units": "kg",
+      "metabolic_rate_units": "ml_O2_min",
+      "log_space": false,
+      "temperature_reference_c": 30.0,
+      "physiological_state": "SMR",
+      "allowed_taxa": [
+        "Alligator mississippiensis"
+      ],
+      "citation": "Gienger CM, Brien ML, Tracy CR, Manolis SC, Webb GJW, Seymour RS & Christian KA (2017) Ontogenetic comparisons of standard metabolism in three species of crocodilians. PLOS ONE 12(2):e0171082. doi:10.1371/journal.pone.0171082. PMC5300253.",
+      "verified": true,
+      "notes": "Species-specific allometric SMR equation for Alligator mississippiensis measured at 30°C. Animals fasted 3–4 days (post-absorptive). n=7 individuals. Mass range studied: 1.29–104 kg. M in kg, SMR in ml O2/min. USAGE NOTE: This equation is used as the MEASURED value for A. mississippiensis at representative mass 100 kg, analogous to CP_SEY13 for C. porosus. The phylogenetic baseline for computing signed_log_residual remains REP_BD76 (clade-level reptile SMR at 30°C). Temperature matches REP_BD76 reference temperature (30°C); no Q10/Arrhenius correction is needed or applied."
+    },
+    {
       "equation_id": "TUNN_CLK08_PROXY",
       "clade": "Thunnini",
       "equation_type": "species_specific",

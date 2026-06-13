@@ -64,13 +64,13 @@ For reference, CP001 (C. porosus, same baseline, same representative mass) has s
 
 ---
 
-## 4. Required Patch Plan (if source is used) — NOT APPLIED IN THIS RUN
+## 4. Patch Plan — APPLIED
 
-This section describes the patch that *would* be required. **No data files have been edited in this run.**
+The patch described below has been applied to the data files. For full details of what was changed, see Section 6 (Files Changed).
 
-### 4.1 `data/real_delta_e_candidates.csv` — AM001 row fields to update
+### 4.1 `data/real_delta_e_candidates.csv` — AM001 row fields updated
 
-| Field | Current value | Proposed new value |
+| Field | Previous value | Applied new value |
 |---|---|---|
 | `source_name` | AnAge database | Gienger et al. 2017 |
 | `source_citation` | AnAge: ... | Gienger CM, Brien ML, Tracy CR, Manolis SC, Webb GJW, Seymour RS, Christian KA (2017) Ontogenetic comparisons of standard metabolism in three species of crocodilians. PLOS ONE 12(2):e0171082. doi:10.1371/journal.pone.0171082. PMC5300253. |
@@ -93,34 +93,18 @@ This section describes the patch that *would* be required. **No data files have 
 | `delta_E_magnitude` | (blank) | 0.1254 |
 | `compute_eligible` | FALSE | TRUE |
 | `quality_flags` | FLAG_NOT_COMPUTE_ELIGIBLE;FLAG_TEMP_UNCORRECTED_REVIEW_REQUIRED | FLAG_COMPUTE_ELIGIBLE;FLAG_MASS_NOT_PAIRED_TO_RATE |
-| `notes` | (existing AnAge note) | Updated note explaining the Gienger et al. (2017) equation, the 100 kg representative mass choice, the computation shown above, and retaining the superseded AnAge 22.2°C value for provenance (as CP001's notes retain its own caveats). |
 
-A new equation entry analogous to `CP_SEY13` (e.g., `AM_GBT17`) would also need to be added to `allometry_config.json` (see 4.4) to document the measured-value equation, mirroring how `CP_SEY13` documents Seymour et al. (2013) for CP001.
+### 4.2 `data/source_verification_matrix.csv` — row added
 
-### 4.2 `data/source_verification_matrix.csv` — rows to add/update
+New row added for Gienger et al. 2017 (usable_for_delta_e=TRUE): SMR = 0.491*M_kg^0.965 ml O2/min at 30°C, fasted 3-4 days, n=7 (1.29-104 kg). Matches REP_BD76 reference temperature exactly; no Q10 correction required.
 
-- **Update** the existing Coulson & Hernandez (1983) row's `notes`/`reason_not_usable` only if full-text access is later obtained (no change proposed here; status unchanged).
-- **Add** a new row:
+### 4.3 `data/missing_data_log.md` — updated
 
-| species_name | source_name | source_type | exact_species_match | contains_metabolic_rate | contains_body_mass | contains_temperature | contains_physiological_state | usable_for_delta_e | reason_not_usable | citation_or_url | notes |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Alligator mississippiensis | Gienger et al. 2017 | primary_literature | TRUE | TRUE | TRUE | TRUE | TRUE | TRUE | (blank — usable) | https://doi.org/10.1371/journal.pone.0171082 (PMC5300253) | SMR = 0.491*M_kg^0.965 ml O2/min at 30°C, fasted 3-4 days, n=7 (1.29-104 kg), incorporates Lewis & Gatten (1985) juveniles. Matches REP_BD76 reference temperature exactly; no Q10 correction required. |
+Alligator section updated from "DATA EXISTS AT WRONG TEMPERATURE" to "RESOLVED via Gienger et al. 2017." AnAge 22.2°C value retained for provenance. Summary table and target-N updated.
 
-### 4.3 `data/missing_data_log.md` — notes needed
+### 4.4 `data/allometry_config.json` — AM_GBT17 added
 
-- Update the *Alligator mississippiensis* section: change status from "DATA EXISTS AT WRONG TEMPERATURE" to "RESOLVED — primary-literature 30°C SMR equation located (Gienger et al. 2017)."
-- Retain the AnAge 22.2°C value and the temperature-mismatch discussion as historical/provenance context (do not delete — it documents why the original AM001 entry was non-eligible and shows the reasoning trail).
-- Note explicitly that the new value uses a **representative-mass, equation-derived** approach (same caveat class as CP001, `FLAG_MASS_NOT_PAIRED_TO_RATE`), not a single paired animal measurement — so the same caveat language used for CP001 should be mirrored for AM001.
-- Update the "Impact on Phase 3 readiness" note: resolving AM001 brings target N from 1 to 2 (still below threshold of 3; H. glaber human decision remains the only path to N=3).
-
-### 4.4 `data/allometry_config.json` — changes needed
-
-Two possible approaches; a human should confirm which is preferred before any edit is made:
-
-1. **Mirror CP_SEY13 exactly** (recommended for consistency): add a new entry `AM_GBT17` documenting `SMR_ml_O2_min = 0.491 * M_kg^0.965` for *Alligator mississippiensis* at 30°C, `verified: true`, citing Gienger et al. (2017), with a `notes` field stating this is the *measured* value equation (analogous role to CP_SEY13), while `REP_BD76` remains the *baseline* equation (avoiding circularity, exactly as CP001's notes already explain for CP_SEY13 vs REP_BD76).
-2. Alternatively, since the measured value can be computed directly and entered as a literal number in `real_delta_e_candidates.csv` (as done above), the config addition is documentation/provenance rather than strictly required for computation — but adding it preserves the "no constants hard-coded in Python" principle already established for CP001.
-
-**No change to `REP_BD76`, `MAM_KLB47`, `AVE_MW04`, or `TUNN_CLK08_PROXY` is proposed.** No Q10/Arrhenius equation is added or needed — the recovered source already matches the 30°C reference temperature.
+New entry `AM_GBT17` added (verified=true): `SMR_ml_O2_min = 0.491 * M_kg ^ 0.965` for *Alligator mississippiensis* at 30°C, citing Gienger et al. (2017). Mirrors the role of `CP_SEY13` for CP001 — documents the measured-value equation while REP_BD76 remains the baseline (no circularity). No change to REP_BD76, MAM_KLB47, AVE_MW04, or TUNN_CLK08_PROXY.
 
 ---
 
@@ -128,14 +112,27 @@ Two possible approaches; a human should confirm which is preferred before any ed
 
 | Item | Value |
 |---|---|
-| Current target compute-eligible count | 1 / 5 (gate threshold 3/5) — **INSUFFICIENT_COMPUTABLE_N** |
-| Count if Alligator becomes eligible (this patch applied) | 2 / 5 |
-| Is N ≥ 3 reached? | **No.** 2/5 is still below the threshold of 3/5. Gate verdict would remain INSUFFICIENT_COMPUTABLE_N even after this patch. |
+| Target compute-eligible count before patch | 1 / 5 (gate threshold 3/5) — **INSUFFICIENT_COMPUTABLE_N** |
+| Count after patch applied | **2 / 5** |
+| Is N ≥ 3 reached? | **No.** 2/5 is still below the threshold of 3/5. Gate verdict remains INSUFFICIENT_COMPUTABLE_N. |
 | Heterocephalus glaber status | **Unchanged and unaddressed by this investigation.** *H. glaber* would still require a separate human method decision (accept thermoconformer BMR with `FLAG_TNZ_UNCLEAR`, or classify as permanently non-computable) before it could count toward N. Only if that decision is "accept" AND this Alligator patch is applied would N reach 3/5 — exactly at threshold, still requiring human approval per the gate's existing rules. |
 | Dermochelys coriacea / Thunnus thynnus | Unchanged — both remain structurally non-computable per existing findings; not addressed by this investigation (out of scope). |
 
 ---
 
-## 6. Do-Not-Proceed Statement
+## 6. Files Changed by This Recovery Patch
 
-**Phase 3 remains blocked.** Even if the patch plan in Section 4 is applied, the resulting target compute-eligible count (2/5) does not reach the gate threshold (3/5), so the gate verdict would remain **INSUFFICIENT_COMPUTABLE_N** and **Phase 3 must not run**. Reaching N≥3 additionally requires a human method decision on *Heterocephalus glaber* (Section 5). Even at N=3 exactly at threshold, explicit human approval is required before Phase 3 may run, per the existing control package rules. No data files (`real_delta_e_candidates.csv`, `source_verification_matrix.csv`, `missing_data_log.md`, `allometry_config.json`), `cne_simulation.py`, or claim-registry status have been modified in this run.
+| File | Change |
+|---|---|
+| `data/real_delta_e_candidates.csv` | AM001 row: source changed to Gienger 2017; compute_eligible=TRUE; residuals populated |
+| `data/source_verification_matrix.csv` | New row added for Gienger et al. 2017 (usable_for_delta_e=TRUE) |
+| `data/allometry_config.json` | AM_GBT17 equation added (verified=true) |
+| `data/missing_data_log.md` | Alligator section updated to RESOLVED; summary table updated |
+| `docs/PHASE2A_GATE_RESULT.md` | Addendum added; summary counts updated to 2/5 |
+| `docs/ALLIGATOR_SOURCE_RECOVERY.md` | This file (investigation document; merged from remote investigation + local patch record) |
+
+---
+
+## 7. Do-Not-Proceed Statement
+
+**Phase 3 remains blocked.** The resulting target compute-eligible count (2/5) does not reach the gate threshold (3/5), so the gate verdict remains **INSUFFICIENT_COMPUTABLE_N** and **Phase 3 must not run**. Reaching N≥3 additionally requires a human method decision on *Heterocephalus glaber* (Section 5). Even at N=3 exactly at threshold, explicit human approval is required before Phase 3 may run, per the existing control package rules. No eligibility criteria were loosened to achieve this resolution.
