@@ -9,7 +9,7 @@ Phase 2A source verification and data-quality grounding has been completed. All 
 | Phase | 2A — Source Verification and Candidate ΔE Computation |
 | Audit status | PASS (after four patches) |
 | Gate verdict | INSUFFICIENT_COMPUTABLE_N |
-| Target species compute-eligible | 1 of 5 |
+| Target species compute-eligible | 2 of 5 (updated — see Addendum) |
 | Gate threshold | 3 of 5 |
 | Phase 3 authorized | NO |
 
@@ -46,7 +46,7 @@ All computed residuals (`CP001`, `GG001`, `MM001`) were verified arithmetically 
 | Species | Role | Compute-Eligible | δE magnitude | Primary blocker / Notes |
 |---|---|---|---|---|
 | *Crocodylus porosus* | **Target** | **YES** | **0.1664** | Provisional / equation-derived. Seymour et al. 2013 species-specific SMR equation at 30°C used at representative mass 100 kg. Baseline: REP_BD76 (Bennett & Dawson 1976). `FLAG_MASS_NOT_PAIRED_TO_RATE` — no single paired animal measurement; representative mass is a modeling choice within the study range. |
-| *Alligator mississippiensis* | **Target** | NO | null | AnAge measurement at 22.2°C is 7.8°C below the 30°C reference required by REP_BD76. Temperature mismatch prevents defensible δE computation without an authorized Q10/Arrhenius correction. **Recovery path:** locate a valid exact-species fasting/resting/standard metabolic rate at or near 30°C in primary literature (Coulson & Hernandez 1983 or equivalent), OR obtain human approval to add a cited Q10 correction equation to `allometry_config.json`. |
+| *Alligator mississippiensis* | **Target** | **YES** (updated) | **0.1254** | **RESOLVED** via Gienger et al. 2017 (PLOS ONE 12(2):e0171082). Exact-species SMR at 30°C, fasted 3–4 days, n=7, mass range 1.29–104 kg. Equation AM_GBT17: SMR = 0.491 × M_kg^0.965 ml O₂/min. Representative mass 100 kg used. Baseline: REP_BD76. `FLAG_MASS_NOT_PAIRED_TO_RATE` applied (equation-derived, not single paired animal). See Addendum. |
 | *Heterocephalus glaber* | **Target** | NO | null | Data exists (O'Connor 1999; ~13.8 ml O₂/h at 30°C for ~35 g). Not computed due to thermoconforming physiology: *H. glaber* metabolic rate tracks ambient temperature; the standard mammalian thermoneutral-zone (TNZ) concept does not apply. Using the Kleiber mammal baseline would produce a large negative residual reflecting thermoconforming biology rather than clade-relative evolutionary deviation. **Recovery path:** human method decision required — either (a) accept measurement with `FLAG_TNZ_UNCLEAR` and explicit interpretation caveat, or (b) classify as permanently non-computable. |
 | *Dermochelys coriacea* | **Target** | NO | null | No whole-animal BMR or SMR exists in the literature. Only diving metabolic rate (DMR ≈ 0.73 ml O₂/kg/min, Southwood 2007) is available; DMR is an explicitly excluded physiological state. Maintaining elevated core temperature via gigantothermy, not elevated basal metabolic rate. Technically infeasible to measure whole-animal BMR for a 350+ kg obligate marine animal. **Structurally absent — not resolvable from existing data.** |
 | *Thunnus thynnus* | **Target** | NO | null | No direct *T. thynnus* standardized metabolic rate exists. Available proxy: *T. maccoyii* RMR = 460 mg O₂/kg/h at 19°C (Clark 2008). Four simultaneous disqualifiers: `FLAG_PROXY_SPECIES`, `FLAG_NON_STANDARD_STATE` (obligate ram ventilators cannot rest), `FLAG_TEMP_UNCORRECTED_REVIEW_REQUIRED` (19°C, no authorized correction), and no verified clade-level allometric baseline for Thunnini in `allometry_config.json`. **Structurally absent — not resolvable from existing data without new primary measurements.** |
@@ -57,17 +57,17 @@ All computed residuals (`CP001`, `GG001`, `MM001`) were verified arithmetically 
 
 ## Explicit Statements
 
-**Phase 3 must not run.** The Phase 3 readiness gate has failed (1 of 5 target species compute-eligible; threshold is 3 of 5). No update to `cne_simulation.py`, no real-ΔE rerun, and no new Phase 3 outputs are authorized under the v2.1 control package rules until the gate passes with human explicit approval.
+**Phase 3 must not run.** The Phase 3 readiness gate has failed (2 of 5 target species compute-eligible after Alligator source recovery; threshold is 3 of 5). No update to `cne_simulation.py`, no real-ΔE rerun, and no new Phase 3 outputs are authorized under the v2.1 control package rules until the gate passes with human explicit approval.
 
 **The placeholder Phase 3 result remains artifact/provenance only.** The previously reported sigmoid threshold (δE ≈ 0.554) and lock-in ratio (253,988×) were produced using placeholder ΔE values [0.1, 0.25, 0.5, 0.75, 1.0] with no biological grounding. They remain on record for methodological provenance only and must not be cited as findings.
 
-**The current species set is not data-sufficient for the claimed ΔE test.** With only 1 of 5 target species yielding a compute-eligible residual — and that one row marked provisional/equation-derived — any Phase 3 output using this data would have insufficient statistical power and would not constitute an empirical test of the EME hypothesis.
+**The current species set is not data-sufficient for the claimed ΔE test.** With only 2 of 5 target species yielding compute-eligible residuals — both rows marked provisional/equation-derived — any Phase 3 output using this data would have insufficient statistical power and would not constitute an empirical test of the EME hypothesis.
 
 ---
 
 ## Next Allowed Actions
 
-1. **Narrow source recovery for *Alligator mississippiensis*:** Search Coulson & Hernandez (1983), Coulson (1984), or other primary alligator physiology literature for a SMR or resting metabolic rate measurement at or near 30°C. If found and verified, update `data/real_delta_e_candidates.csv` and `data/source_verification_matrix.csv`, and reassess compute-eligibility.
+1. ~~**Narrow source recovery for *Alligator mississippiensis*:**~~ **COMPLETED** — Gienger et al. 2017 identified; AM001 is now compute-eligible (δE = 0.1254). See Addendum.
 
 2. **Human method decision for *Heterocephalus glaber*:** The project owner must decide whether to accept the O'Connor (1999) thermoconformer measurement as compute-eligible with full flagging, or classify it as permanently non-computable. Record the decision and rationale in `data/missing_data_log.md`.
 
@@ -82,4 +82,47 @@ All computed residuals (`CP001`, `GG001`, `MM001`) were verified arithmetically 
 - **Proxy substitution** — no sister species may be silently used as a compute-eligible data source for any target species.
 - **Eligibility-gate gaming** — compute-eligibility criteria must not be loosened, reinterpreted, or special-cased to reach N ≥ 3.
 - **Reviving thermodynamic-floor wording** — the metric is Current Clade-Relative Metabolic Deviation; ancestral-transition-energy framing is not supported by the available data.
-- **Claiming the hypothesis passed** — a valid clean gate fail at N = 1 is the correct and honest outcome.
+- **Claiming the hypothesis passed** — a valid clean gate fail at N = 2 is the correct and honest outcome.
+
+---
+
+## Addendum — Alligator mississippiensis Source Recovery
+
+**Date of patch:** Post-initial gate result  
+**Patch type:** Source recovery — no eligibility criteria loosened
+
+A primary-literature source was identified that resolves the Alligator mississippiensis temperature-mismatch blocker without requiring a Q10 correction or any proxy species.
+
+**Source:** Gienger CM, Brien ML, Tracy CR, Manolis SC, Webb GJW, Seymour RS & Christian KA (2017). Ontogenetic comparisons of standard metabolism in three species of crocodilians. PLOS ONE 12(2):e0171082. doi:10.1371/journal.pone.0171082. PMC5300253.
+
+**Key findings used:**
+- Exact species: *Alligator mississippiensis*
+- Physiological state: SMR, fasted 3–4 days (post-absorptive) ← compute-eligible state
+- Measurement temperature: 30°C ← matches REP_BD76 reference; no correction needed
+- Allometric equation: SMR = 0.491 × M_kg^0.965 ml O₂/min (entry AM_GBT17 in `allometry_config.json`, `verified=true`)
+- Study mass range: 1.29–104 kg; representative mass 100 kg used (matching CP001 approach)
+
+**Computed values:**
+- Measured SMR at 100 kg: 0.491 × 100^0.965 = 41.80 ml O₂/min = 2508.1 ml O₂/h
+- REP_BD76 baseline at 100,000 g: 0.188 × 100000^0.80 = 1880.0 ml O₂/h
+- signed_log_residual: log10(2508.1/1880.0) = 0.1254
+- delta_E_magnitude: 0.1254
+- Quality flags: `FLAG_COMPUTE_ELIGIBLE;FLAG_MASS_NOT_PAIRED_TO_RATE`
+
+**Files updated by this patch:**
+- `data/real_delta_e_candidates.csv` — AM001 row replaced; now compute_eligible=TRUE
+- `data/source_verification_matrix.csv` — Gienger et al. 2017 row added (usable_for_delta_e=TRUE)
+- `data/allometry_config.json` — AM_GBT17 equation added (verified=true)
+- `data/missing_data_log.md` — Alligator section updated to RESOLVED; summary table updated
+
+**Updated gate state:**
+
+| Field | Original | After Alligator patch |
+|---|---|---|
+| Audit status | PASS | PASS |
+| Target species compute-eligible | 1 of 5 | **2 of 5** |
+| Gate threshold | 3 of 5 | 3 of 5 |
+| Gate verdict | INSUFFICIENT_COMPUTABLE_N | **INSUFFICIENT_COMPUTABLE_N** |
+| Phase 3 authorized | NO | NO |
+
+Gate still fails. *Heterocephalus glaber* remains the only remaining plausible path to N=3, subject to a separate human method decision on thermoconforming physiology (see `data/missing_data_log.md`). *Dermochelys coriacea* and *Thunnus thynnus* remain structurally non-computable.

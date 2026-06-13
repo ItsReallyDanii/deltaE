@@ -4,7 +4,7 @@
 **Metric:** Current Clade-Relative Metabolic Deviation  
 **Formula:** `signed_log_residual = log10(metabolic_rate_standardized / predicted_metabolic_rate)`  
 **Generated:** Phase 2A source verification pass  
-**Status:** 1 of 5 target species compute-eligible; gate INSUFFICIENT_COMPUTABLE_N
+**Status:** 2 of 5 target species compute-eligible after Alligator source recovery; gate INSUFFICIENT_COMPUTABLE_N
 
 ---
 
@@ -53,19 +53,23 @@
 
 ## Alligator mississippiensis
 
-- **Field missing:** Standardized metabolic rate measurement at the reference temperature (30°C) required by the clade-level reptile allometric baseline (REP_BD76, Bennett & Dawson 1976)
-- **Status:** DATA EXISTS AT WRONG TEMPERATURE — AnAge reports resting MR at 22.2°C; reference temperature is 30°C; no verified Q10 correction equation in allometry_config.json
-- **Attempted sources:**
-  - AnAge database (https://genomics.senescence.info/species/entry.php?species=Alligator_mississippiensis): resting MR = 0.1539 W at 1079 g, temperature 22.2°C — temperature mismatch
-  - Coulson & Hernandez (1983) Comp Biochem Physiol 74A:1-182: extensive alligator metabolic study; full-text access needed to confirm whether 30°C measurements are reported
-  - Bennett & Dawson (1976) Biology of the Reptilia: provides clade equation at 30°C; does not provide A. mississippiensis specific measurements
-- **Available alternative data:**
-  - AnAge value: 0.1539 W at 22.2°C (resting MR, 1079 g) — documented but not computable
-  - For reference (not used): REP_BD76 at 1079 g predicts 0.188 * 1079^0.80 = 0.188 * 214.4 = 40.3 ml O₂/h at 30°C; measured is 27.56 ml O₂/h at 22.2°C — gap primarily temperature-driven
-- **Reason for exclusion:** The reptile SMR allometric baseline (REP_BD76) is calibrated at 30°C. Applying it to a measurement taken at 22.2°C would produce a delta_E that conflates a 7.8°C temperature effect with species-level metabolic deviation. Ectotherm metabolic rates decrease substantially with temperature (Q₁₀ ≈ 2–3 for reptiles at 20–30°C); applying no correction would artificially suppress the measured value and generate a misleading negative residual. No Q10 or Arrhenius correction equation is currently authorized in allometry_config.json.
-- **Fallback used:** AnAge data documented in real_delta_e_candidates.csv with `compute_eligible=FALSE` and `FLAG_TEMP_UNCORRECTED_REVIEW_REQUIRED`.
-- **Human review needed:** Yes — two paths exist: (a) locate A. mississippiensis SMR measurement at 30°C in Coulson & Hernandez (1983) or other primary literature and return for compute-eligibility reassessment; (b) authorize addition of a verified reptile Q10 correction equation to allometry_config.json, citing a primary source (e.g., Coulson 1984, Bennett & Dawson 1976, or Grigg & Seebacher papers), then recompute with FLAG_TEMP_NORMALIZED. Path (a) is strongly preferred per control package rules.
-- **Impact on Phase 3 readiness:** If resolved via Path (a) or (b), A. mississippiensis could become the second compute-eligible target species. Together with C. porosus this would give N=2 — still below the gate threshold of 3. Both crocodilians being resolved is required to approach the gate, and even then H. glaber human-method-decision would need resolution to reach N=3.
+- **Field missing:** ~~Standardized metabolic rate measurement at the reference temperature (30°C)~~ — **RESOLVED**
+- **Status:** RESOLVED via source recovery — Gienger et al. 2017 provides exact-species A. mississippiensis SMR at 30°C. AM001 is now compute-eligible. Target N rises from 1/5 to 2/5. Gate verdict remains INSUFFICIENT_COMPUTABLE_N.
+- **Resolution source:** Gienger CM et al. (2017) Ontogenetic comparisons of standard metabolism in three species of crocodilians. PLOS ONE 12(2):e0171082. doi:10.1371/journal.pone.0171082. PMC5300253.
+  - Exact species: *Alligator mississippiensis*
+  - Physiological state: SMR (fasted 3–4 days, post-absorptive)
+  - Temperature: 30°C — matches REP_BD76 reference; no Q10 correction needed
+  - Equation: SMR = 0.491 × M_kg^0.965 ml O₂/min (allometry_config.json entry: AM_GBT17, `verified=true`)
+  - Study mass range: 1.29–104 kg; representative mass 100 kg used (matching CP001 approach)
+  - Computed δE: signed_log_residual = log10(2508.1/1880.0) = 0.1254; delta_E_magnitude = 0.1254
+- **Provenance — prior non-computable record (retained for audit trail):**
+  - AnAge database: resting MR = 0.1539 W at 1079 g at 22.2°C — not used for computation
+  - Temperature mismatch (22.2°C vs 30°C REP_BD76 reference) was the original blocker; no Q10 correction was authorized
+  - REP_BD76 at 1079 g correctly predicts 0.188 × 1079^0.80 = 0.188 × 266.9 = 50.2 ml O₂/h at 30°C; the AnAge measured value of 27.56 ml O₂/h at 22.2°C reflects the temperature depression, not a negative clade deviation
+  - That AnAge row remains in source_verification_matrix.csv with `usable_for_delta_e=FALSE` for provenance
+- **Fallback used:** None — resolved by primary literature source without proxy or Q10 correction.
+- **Human review needed:** No — recovery is complete. AM001 is compute-eligible with standard flags.
+- **Impact on Phase 3 readiness:** A. mississippiensis is now compute-eligible. Target N = 2 of 5. Gate threshold remains 3 of 5. Gate still fails. *Heterocephalus glaber* is the only remaining plausible path to N=3, requiring a separate human method decision on thermoconforming physiology (see H. glaber section below).
 
 ---
 
@@ -93,18 +97,17 @@
 | Species | Compute-Eligible | Primary Blocker | Resolvable? |
 |---|---|---|---|
 | Crocodylus porosus | **TRUE** | — | N/A |
-| Alligator mississippiensis | FALSE | Temperature mismatch (22.2°C vs 30°C ref) | Yes — locate 30°C primary lit or authorize Q10 correction |
+| Alligator mississippiensis | **TRUE** | ~~Temperature mismatch~~ — **RESOLVED** via Gienger et al. 2017 | N/A — resolved |
 | Heterocephalus glaber | FALSE | Thermoconforming physiology — human method decision | Yes — pending human decision |
 | Dermochelys coriacea | FALSE | No whole-animal BMR exists; technically infeasible | No — structurally absent |
 | Thunnus thynnus | FALSE | No direct species rate; proxy + non-standard state + wrong temp + no baseline equation | No — structurally absent |
 | Gallus gallus (reference) | TRUE | — | N/A |
 | Mus musculus (reference) | TRUE | — | N/A |
 
-**Target species compute-eligible: 1 of 5**  
+**Target species compute-eligible: 2 of 5** *(updated from 1/5 after Alligator source recovery)*  
 **Gate threshold: 3 of 5**  
 **Gate verdict: INSUFFICIENT_COMPUTABLE_N**
 
-Human actions that could change the verdict:
-1. Locate A. mississippiensis measurement at 30°C → N=2
-2. Resolve H. glaber method decision (accept) → N=2 (if AM not resolved) or N=3 (if AM also resolved)
-3. Both actions → N=3 → gate passes exactly at threshold → human approval required for Phase 3 at N=3
+Human actions that could still change the verdict:
+1. Resolve H. glaber method decision (accept with FLAG_TNZ_UNCLEAR) → N=3 → gate passes exactly at threshold → human approval required for Phase 3 at N=3
+2. If H. glaber is rejected → gate fails permanently at N=2 with current species set
